@@ -7,3 +7,11 @@ export const GetChairsDTO = z.object({
     width: z.number(),
     image: z.string(),
 })
+
+export const GetTablesDTO = z.object({
+    _id: z.string(),
+    name: z.string(),
+    length: z.number(),
+    width: z.number(),
+    image: z.string(),
+})
