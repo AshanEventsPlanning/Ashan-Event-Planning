@@ -15,3 +15,9 @@ export const GetTablesDTO = z.object({
     width: z.number(),
     image: z.string(),
 })
+
+export const GetArrangementsDTO = z.object({
+    _id: z.string(),
+    name: z.string(),
+    image: z.string(),
+})
