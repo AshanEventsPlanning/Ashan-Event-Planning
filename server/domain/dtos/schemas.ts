@@ -21,3 +21,11 @@ export const GetArrangementsDTO = z.object({
     name: z.string(),
     image: z.string(),
 })
+
+export const calculateDTO = z.object({
+    chair: z.string(),
+    table: z.string(),
+    arrangement: z.string(),
+    length: z.number(),
+    width: z.number()
+})
