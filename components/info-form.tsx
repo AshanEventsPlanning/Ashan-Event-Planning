@@ -7,9 +7,16 @@ import ArrangementOptions from "./arrangement-options";
 import TextInput from "./text-input";
 import NumberInput from "./number-input";
 import { calculateChairsTables } from "@/lib/api/calculate";
+import Report from "./report";
+import { useEffect, useState } from "react";
 
 
 function InfoForm() {
+
+  const [noOfArrangements, setNoOfArrangements] = useState<number | null | unknown>(null);
+  const [type, setType] = useState<any>(null);
+  
+
   // const queryClient = useQueryClient();
   type InfoFormData = {
     chair: string,
@@ -23,13 +30,15 @@ function InfoForm() {
     mode: "onChange",
   });
 
-
   const handleInfoSubmit: SubmitHandler<InfoFormData> = async (data) => {
-    let {table,chair,arrangement,lengthStr, widthStr} = data
+    let { table, chair, arrangement, lengthStr, widthStr } = data
+    setType(arrangement);
+    console.log(type)
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
-    const noOfArrangements = await calculateChairsTables({table,chair,arrangement,length, width})
-    console.log(noOfArrangements)
+    const result = await calculateChairsTables({ table, chair, arrangement, length, width });
+    console.log(result)
+    setNoOfArrangements(result);
   };
 
 
@@ -69,6 +78,7 @@ function InfoForm() {
           Proceed
         </button>
       </form>
+      <div>{noOfArrangements !== null && <Report noOfArrangements={noOfArrangements} type={type} />}</div>      
     </FormProvider>
   );
 }

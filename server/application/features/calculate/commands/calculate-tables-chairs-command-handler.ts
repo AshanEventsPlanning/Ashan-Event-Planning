@@ -1,4 +1,4 @@
-import { getChairByName, getTableByName } from "@/server/infrastructure/repositories/calulate-repository";
+import { getChairByName, getTableByName, getArrangementByName} from "@/server/infrastructure/repositories/calulate-repository";
 
 type CalculateCommand = {
     chair: string;
@@ -12,13 +12,8 @@ export default async function calculateTablesChairsCommandHandler (command : Cal
     const { chair, table, arrangement, length, width} = command
     const chairData = await getChairByName( chair )
     const tableData = await getTableByName( table )
+    const arrangementData = await getArrangementByName( arrangement )
 
-    if(arrangement == "Type 1"){
-        const noOfArragements = (length*width)/(tableData.length*tableData.width + chairData.length*chairData.width*2)
-        return noOfArragements;
-    }
-    else if(arrangement == "Type 2"){
-        const noOfArragements = (length*width)/(tableData.length*tableData.width + chairData.length*chairData.width*4)
-        return noOfArragements;
-    }
+    const noOfArragements = (length*width)/(tableData.length*tableData.width + chairData.length*chairData.width*arrangementData.chairspertable)
+    return noOfArragements;
 }

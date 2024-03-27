@@ -19,7 +19,7 @@ export const GetTablesDTO = z.object({
 export const GetArrangementsDTO = z.object({
     _id: z.string(),
     name: z.string(),
-    image: z.string(),
+    chairspertable: z.number(),
 })
 
 export const calculateDTO = z.object({
