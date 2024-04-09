@@ -15,7 +15,7 @@ function InfoForm() {
 
   const [noOfArrangements, setNoOfArrangements] = useState<number | null | unknown>(null);
   const [type, setType] = useState<any>(null);
-  
+
 
   // const queryClient = useQueryClient();
   type InfoFormData = {
@@ -24,6 +24,8 @@ function InfoForm() {
     arrangement: string,
     lengthStr: string,
     widthStr: string,
+    location: string,
+    date: Date
   }
 
   const infoForm = useForm<InfoFormData>({
@@ -31,12 +33,12 @@ function InfoForm() {
   });
 
   const handleInfoSubmit: SubmitHandler<InfoFormData> = async (data) => {
-    let { table, chair, arrangement, lengthStr, widthStr } = data
+    let { table, chair, arrangement, lengthStr, widthStr, location, date } = data
     setType(arrangement);
     console.log(type)
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
-    const result = await calculateChairsTables({ table, chair, arrangement, length, width });
+    const result = await calculateChairsTables({ table, chair, arrangement, length, width, location, date });
     console.log(result)
     setNoOfArrangements(result);
   };
@@ -69,6 +71,17 @@ function InfoForm() {
           <h1></h1>
           <TextInput name="lengthStr" label="Length" />
           <TextInput name="widthStr" label="Width" />
+          <TextInput name="location" label="Location" />
+        </div>
+        <div className="py-4 lg:px-8 bg-white  rounded-md mt-4 grid lg:grid-cols-2 gap-x-6 ">
+          <h1 className="text-lg font-semibold ">Date & Time</h1>
+          <h1></h1>
+          <div>
+            <label htmlFor='date' className="block text-base font-medium py-2">
+              Date
+            </label>
+            <input type='date' id='date'className="border border-gray-400 rounded-md text-base py-2 px-4 w-full" />
+          </div>
         </div>
         <button
           type="submit"
@@ -78,7 +91,7 @@ function InfoForm() {
           Proceed
         </button>
       </form>
-      <div>{noOfArrangements !== null && <Report noOfArrangements={noOfArrangements} type={type} />}</div>      
+      <div>{noOfArrangements !== null && <Report noOfArrangements={noOfArrangements} type={type} />}</div>
     </FormProvider>
   );
 }

@@ -5,11 +5,13 @@ type CalculateCommand = {
     table: string;
     arrangement: string;
     length: number;
-    width: number
+    width: number,
+    location: string,
+    date: Date
   };
 
 export default async function calculateTablesChairsCommandHandler (command : CalculateCommand) {
-    const { chair, table, arrangement, length, width} = command
+    const { chair, table, arrangement, length, width, location, date} = command
     const chairData = await getChairByName( chair )
     const tableData = await getTableByName( table )
     const arrangementData = await getArrangementByName( arrangement )
