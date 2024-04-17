@@ -13,12 +13,11 @@ export default function Report({ noOfArrangements, type }: { noOfArrangements: a
     }
     // console.log(data)
     const chairsPerTable = data?.chairspertable ?? 0;
-
     return (
-        <div className="flex flex-col justify-start items-center p-8">
-            <h1 className="font-bold text-lg p-4">Report</h1>
-            <h2>Max No. of Tables: {Math.floor(noOfArrangements)}</h2>
-            <h2>No. of chairs: {Math.floor(noOfArrangements * chairsPerTable)}</h2>
+        <div className="flex flex-col justify-start items-center p-8 shadow-lg border border-black m-20 rounded-lg bg-lime-200">
+            <h1 className="font-bold text-lg p-4 italic ">Report</h1>
+            <h2 className='p-2 italic'>Max No. of Tables: {Math.floor(noOfArrangements)}</h2>
+            <h2 className='p-2 italic'>Max No. of chairs: {Math.floor(noOfArrangements * chairsPerTable)}</h2>
         </div>
     );
 }

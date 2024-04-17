@@ -29,5 +29,6 @@ export const calculateDTO = z.object({
     length: z.number(),
     width: z.number(),
     location: z.string(),
-    date: z.date()
+    date: z.string(),
+    time: z.string()
 })
