@@ -1,0 +1,1 @@
+- The Font size in new bar is given as 18px. but reset back to 14

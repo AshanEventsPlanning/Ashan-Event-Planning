@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 
 export default function Navbar() {
     return (
@@ -8,6 +9,14 @@ export default function Navbar() {
                 <Link href='/' className='p-6 font-bold text-xl'>Home</Link>
                 <Link href='/chairs' className='p-6 font-bold text-xl'>Chairs</Link>
                 <Link href='/tables' className='p-6 font-bold text-xl'>Tables</Link>
+            </div>
+            <div>
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
             </div>
         </div>
     )

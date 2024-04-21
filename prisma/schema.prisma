@@ -8,17 +8,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
+model Order {
   id        Int     @id @default(autoincrement())
   chair     String
   table     String
-  arrangement     String
-  content   String?
+  arrangement String
   length    Int
   width     Int
   location  String
   date      String
   time      String
-  published Boolean @default(false)
+  noOfArrangements Int
 }
 
