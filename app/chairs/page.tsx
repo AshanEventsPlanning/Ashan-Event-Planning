@@ -11,7 +11,7 @@ export default function ChairsPage(){
     }
 
     return(
-        <div className='flex'>
+        <div className='flex m-8'>
             {
                 data?.map((chair)=>(
                     <div className='p-4 m-4 border border-gray-600 rounded-lg shadow-lg'>
