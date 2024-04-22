@@ -13,8 +13,8 @@ export default function TablesPage(){
     return(
         <div className='flex m-8'>
             {
-                data?.map((table)=>(
-                    <div className='p-4 m-4 border border-gray-600  rounded-lg shadow-lg'>
+                data?.map((table, i)=>(
+                    <div key={i} className='p-4 m-4 border border-gray-600  rounded-lg shadow-lg'>
                         <Image src={table.image} alt={table.name} width={200} height={200}/>
                         <h1 className='p-2 font-bold text-center'>
                             {table.name}
