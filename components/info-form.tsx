@@ -81,13 +81,13 @@ function InfoForm() {
             <label htmlFor='date' className="block text-base font-medium py-2">
               Date
             </label>
-            <input type='date' name='date' id='date'className="border border-gray-400 rounded-md text-base py-2 px-4 w-full" {...infoForm.register('date')} />
+            <input type='date'  id='date'className="border border-gray-400 rounded-md text-base py-2 px-4 w-full" {...infoForm.register('date')} />
           </div>
           <div>
             <label htmlFor='time' className="block text-base font-medium py-2">
               Time
             </label>
-            <input type='time' name='time' id='time' className="border border-gray-400 rounded-md text-base py-2 px-4 w-full" {...infoForm.register('time')} />
+            <input type='time' id='time' className="border border-gray-400 rounded-md text-base py-2 px-4 w-full" {...infoForm.register('time')} />
           </div>
         </div>
         <button
