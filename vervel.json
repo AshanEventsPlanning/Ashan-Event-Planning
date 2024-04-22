@@ -2,7 +2,7 @@
     "build": {
       "commands": [
         {
-          "command": "prisma generate"
+          "command": "npx prisma generate"
         },
         {
           "command": "npm run build"
