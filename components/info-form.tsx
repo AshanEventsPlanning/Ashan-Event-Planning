@@ -9,6 +9,7 @@ import NumberInput from "./number-input";
 import { calculateChairsTables } from "@/lib/api/calculate";
 import Report from "./report";
 import { useEffect, useState } from "react";
+import { currentUser } from '@clerk/nextjs/server';
 
 
 function InfoForm() {
@@ -37,9 +38,11 @@ function InfoForm() {
     console.log(data)
     let { table, chair, arrangement, lengthStr, widthStr, location, date, time } = data
     setType(arrangement);
+    const user = await currentUser();
+    const userId = user?.id
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
-    const result = await calculateChairsTables({ table, chair, arrangement, length, width, location, date, time });
+    const result = await calculateChairsTables({ userId, table, chair, arrangement, length, width, location, date, time });
     console.log(result)
     setNoOfArrangements(result);
   };

@@ -29,7 +29,8 @@ type OrderParams = {
     location: string,
     date: string,
     time : string,
-    noOfArrangements : number
+    noOfArrangements : number,
+    userId: string
   };
 
 export async function createOrder( params : OrderParams ) {
@@ -44,6 +45,7 @@ export async function createOrder( params : OrderParams ) {
             date: params.date,
             time : params.time,
             noOfArrangements : params.noOfArrangements,
+            userId: params.userId
         },
       });
       return Order.noOfArrangements;

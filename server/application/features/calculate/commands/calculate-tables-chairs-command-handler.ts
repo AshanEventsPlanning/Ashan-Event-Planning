@@ -8,18 +8,19 @@ type CalculateCommand = {
     width: number,
     location: string,
     date: string,
-    time : string
+    time : string,
+    userId: string
   };
 
 export default async function calculateTablesChairsCommandHandler (command : CalculateCommand) {
-    const { chair, table, arrangement, length, width, location, date, time} = command
+    const { chair, table, arrangement, length, width, location, date, time, userId} = command
     const chairData = await getChairByName( chair )
     const tableData = await getTableByName( table )
     const arrangementData = await getArrangementByName( arrangement )
 
     const noOfArrangements = (length*width)/(tableData.length*tableData.width + chairData.length*chairData.width*arrangementData.chairspertable)
 
-    const newNoOfArrangements = await createOrder({chair, table, arrangement, length, width, location, date, time, noOfArrangements})
+    const newNoOfArrangements = await createOrder({chair, table, arrangement, length, width, location, date, time, noOfArrangements, userId})
 
     return newNoOfArrangements;
 }
