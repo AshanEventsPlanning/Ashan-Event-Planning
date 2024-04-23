@@ -9,14 +9,13 @@ import NumberInput from "./number-input";
 import { calculateChairsTables } from "@/lib/api/calculate";
 import Report from "./report";
 import { useEffect, useState } from "react";
-import { currentUser } from '@clerk/nextjs/server';
 
 
-async function InfoForm() {
+
+async function InfoForm({userId}:{userId:string}) {
 
   const [noOfArrangements, setNoOfArrangements] = useState<number | null | unknown>(null);
   const [type, setType] = useState<any>(null);
-  const user = await currentUser();
 
   // const queryClient = useQueryClient();
   type InfoFormData = {
@@ -38,7 +37,6 @@ async function InfoForm() {
     console.log(data)
     let { table, chair, arrangement, lengthStr, widthStr, location, date, time } = data
     setType(arrangement);
-    const userId = (user)?user.id: ''
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
     const result = await calculateChairsTables({ userId, table, chair, arrangement, length, width, location, date, time });
