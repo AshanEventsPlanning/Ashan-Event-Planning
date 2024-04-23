@@ -6,15 +6,15 @@ import { UserButton } from "@clerk/nextjs"
 import { currentUser } from '@clerk/nextjs/server';
 import { auth } from '@clerk/nextjs/server';
 
-export default async function Home() {
-  let { userId } : { userId: string | null } = auth();
-  if(userId == null){
-    userId= ""
-  }
-  console.log(userId)
+export default  function Home() {
+  // let { userId } : { userId: string | null } = auth();
+  // if(userId == null){
+  //   userId= ""
+  // }
+  // console.log(userId)
   return (
     <div>
-      <InfoForm  userId ={userId}/>
+      <InfoForm />
       {/* <Report noOfArrangements={4} type='1'/> */}
     </div>
   )

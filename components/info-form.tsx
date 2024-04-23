@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 
 
 
-async function InfoForm({userId}:{userId:string}) {
+function InfoForm() {
 
   const [noOfArrangements, setNoOfArrangements] = useState<number | null | unknown>(null);
   const [type, setType] = useState<any>(null);
@@ -39,7 +39,7 @@ async function InfoForm({userId}:{userId:string}) {
     setType(arrangement);
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
-    const result = await calculateChairsTables({ userId, table, chair, arrangement, length, width, location, date, time });
+    const result = await calculateChairsTables({table, chair, arrangement, length, width, location, date, time });
     console.log(result)
     setNoOfArrangements(result);
   };
