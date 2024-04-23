@@ -31,5 +31,5 @@ export const calculateDTO = z.object({
     location: z.string(),
     date: z.string(),
     time: z.string(),
-    userId: z.string()
+    userId: z.string().nullable()
 })

@@ -39,7 +39,7 @@ function InfoForm() {
     let { table, chair, arrangement, lengthStr, widthStr, location, date, time } = data
     setType(arrangement);
     const user = await currentUser();
-    const userId = user?.id
+    const userId = (user)?user.id: ''
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
     const result = await calculateChairsTables({ userId, table, chair, arrangement, length, width, location, date, time });
