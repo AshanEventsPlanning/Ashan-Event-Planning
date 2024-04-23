@@ -1,19 +1,19 @@
 import prisma from "../clients/prisma";
 
 type UserParams = {
-    id: string,
-    first_name: string,
-    last_name: string,
+    first_name: string|null,
+    last_name: string|null,
     email: string,
     image_url: string,
+    id: string | undefined
   };
 
-export default async function createUser(params: UserParams) {
+export async function createUser(params: UserParams) {
     await prisma.user.create({
         data: {
-            id: params.id,
-            first_name: params.first_name,
-            last_name: params.last_name,
+            id: (params.id)? params.id: "",
+            first_name: (params.first_name)? params.first_name: "",
+            last_name: (params.last_name)?params.last_name: "",
             email: params.email,
             image_url: params.image_url,
         },

@@ -1,6 +1,7 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
+import { createUser } from '@/server/infrastructure/repositories/user-repository'
  
 export async function POST(req: Request) {
  
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
   if(eventType == "user.created"){
     const { first_name, last_name, image_url } = evt.data
     const email = evt.data.email_addresses[0].email_address
-    console.log(id,first_name,last_name, image_url,email)
+    await createUser({id,first_name,last_name, image_url,email})
   }
  
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
