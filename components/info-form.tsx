@@ -12,11 +12,11 @@ import { useEffect, useState } from "react";
 import { currentUser } from '@clerk/nextjs/server';
 
 
-function InfoForm() {
+async function InfoForm() {
 
   const [noOfArrangements, setNoOfArrangements] = useState<number | null | unknown>(null);
   const [type, setType] = useState<any>(null);
-
+  const user = await currentUser();
 
   // const queryClient = useQueryClient();
   type InfoFormData = {
@@ -38,7 +38,6 @@ function InfoForm() {
     console.log(data)
     let { table, chair, arrangement, lengthStr, widthStr, location, date, time } = data
     setType(arrangement);
-    const user = await currentUser();
     const userId = (user)?user.id: ''
     const length = parseInt(lengthStr)
     const width = parseInt(widthStr)
