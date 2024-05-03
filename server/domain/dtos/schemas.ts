@@ -5,7 +5,7 @@ export const GetChairsDTO = z.object({
     name: z.string(),
     length: z.number(),
     width: z.number(),
-    image: z.string(),
+    image: z.string().array(),
 })
 
 export const GetTablesDTO = z.object({
@@ -13,7 +13,7 @@ export const GetTablesDTO = z.object({
     name: z.string(),
     length: z.number(),
     width: z.number(),
-    image: z.string(),
+    image: z.string().array(),
 })
 
 export const GetArrangementsDTO = z.object({

@@ -15,7 +15,7 @@ export default function ChairsPage(){
             {
                 data?.map((chair, i)=>(
                     <div key ={i} className='p-4 m-4 border border-gray-600 rounded-lg shadow-lg'>
-                        <Image src={chair.image} alt={chair.name} width={200} height={200}/>
+                        <Image src={chair.image[0]} alt={chair.name} width={200} height={200}/>
                         <h1 className='p-2 font-bold text-center'>
                             {chair.name}
                         </h1>
