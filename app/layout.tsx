@@ -4,6 +4,8 @@ import './globals.css'
 import Providers from '@/providers/providers'
 import Navbar from '@/components/navbar'
 import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import background from "../public/background.webp";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,7 +30,8 @@ export default function RootLayout({
             <UserButton />
           </SignedIn>
         </header> */}
-        <body className={inter.className} style={{ backgroundColor: 'white' }}>
+        
+        <body className={inter.className} >
           <Providers>
             <Navbar />
             {children}

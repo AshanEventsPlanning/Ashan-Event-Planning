@@ -93,7 +93,7 @@ function InfoForm() {
         <button
           type="submit"
           disabled={false}
-          className="block border py-2 text-white rounded-md bg-lime-500 mb-2 mt-8"
+          className="block border py-2 text-black rounded-md bg-slate-400 mb-2 mt-8 border border-white"
         >
           Proceed
         </button>

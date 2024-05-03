@@ -11,7 +11,7 @@ export default function TablesPage(){
     }
 
     return(
-        <div className='flex m-8'>
+        <div className='flex m-8 bg-white'>
             {
                 data?.map((table, i)=>(
                     <div key={i} className='p-4 m-4 border border-gray-600  rounded-lg shadow-lg'>
