@@ -6,7 +6,7 @@ import background from "../public/background.webp";
 export default  function Home() {
 
   return (
-    <div  className="background">
+    <div>
       <InfoForm />
     </div>
   )
