@@ -70,8 +70,8 @@ function InfoForm() {
         <div className="py-2 lg:px-8   rounded-md grid lg:grid-cols-2 gap-x-6 lg:mt-2">
           <h1 className="text-xl font-semibold mb-6">Space information</h1>
           <h1></h1>
-          <TextInput name="lengthStr" label="Length" />
-          <TextInput name="widthStr" label="Width" />
+          <TextInput name="lengthStr" label="Length(m*m)" />
+          <TextInput name="widthStr" label="Width(m*m)" />
           <TextInput name="location" label="Location" />
         </div>
         <div className="py-2 lg:px-8   rounded-md mt-2 grid lg:grid-cols-2 gap-x-6 ">
