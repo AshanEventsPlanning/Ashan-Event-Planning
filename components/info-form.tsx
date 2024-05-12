@@ -48,7 +48,7 @@ function InfoForm() {
 
   return (
     <FormProvider {...infoForm}>
-      <form className="flex flex-col" onSubmit={infoForm.handleSubmit(handleInfoSubmit)}>
+      <form className="flex flex-col background" onSubmit={infoForm.handleSubmit(handleInfoSubmit)}>
         <div className="py-2 lg:px-8  rounded-md mt-8">
           <h1 className="text-lg font-semibold ">Select a chair</h1>
           <SelectInput name="chair" label="" placeholder="Select a chair">
