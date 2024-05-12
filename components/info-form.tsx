@@ -56,7 +56,7 @@ function InfoForm() {
           </SelectInput>
         </div>
         <div className="py-2 lg:px-8  rounded-md mt-2">
-          <h1 className="text-lg font-semibold ">Select a table</h1>
+          <h1 className="text-lg font-semibold ">Select a</h1>
           <SelectInput name="table" label="" placeholder="Select a table">
             <TableOptions />
           </SelectInput>
