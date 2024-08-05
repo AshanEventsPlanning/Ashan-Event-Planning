@@ -16,7 +16,7 @@ export default function ChairOptions(){
       <>
         {data?.map((table) => {
           return (
-            <option key={table._id} className="bg-white py-1" value={table.name}>
+            <option key={table._id} className="bg-white py-1" value={table._id}>
               {table.name}
             </option>
           );

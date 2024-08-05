@@ -8,9 +8,10 @@ interface SelectInputProps {
   name: string;
   placeholder: string;
   children: React.ReactNode;
+  onChange?:(e: any) => void;
 }
 
-function SelectInput({ label, name: inputKey, placeholder, children }: SelectInputProps) {
+function SelectInput({ label, name: inputKey, placeholder, children, onChange }: SelectInputProps) {
   const { register, formState } = useFormContext();
 
   const id = useId();
@@ -27,6 +28,7 @@ function SelectInput({ label, name: inputKey, placeholder, children }: SelectInp
         id={id}
         {...register(inputKey, { required: "This field is required" })}
         className="border border-gray-400 rounded-md shadow-md py-2 ps-4 pe-16 text-sm font-normal"
+        onChange={onChange}
       >
         <option value="" disabled hidden>
           {placeholder}

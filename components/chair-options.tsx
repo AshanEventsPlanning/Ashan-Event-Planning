@@ -16,7 +16,7 @@ export default function ChairOptions(){
       <>
         {data?.map((chair) => {
           return (
-            <option key={chair._id} className="bg-white py-1" value={chair.name}>
+            <option key={chair._id} className="bg-white py-1" value={chair._id}>
               {chair.name}
             </option>
           );
