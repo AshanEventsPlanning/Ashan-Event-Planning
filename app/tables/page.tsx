@@ -2,6 +2,9 @@
 import { getTables } from '@/lib/api/table'
 import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
+import { Box, Grid } from "@mui/material";
+import React from "react";
+import ItemCard from "@/components/ItemCard";
 
 export default function TablesPage(){
 
@@ -11,19 +14,14 @@ export default function TablesPage(){
     }
 
     return(
-        <div className='flex m-8 bg-white'>
-            {
-                data?.map((table, i)=>(
-                    <div key={i} className='p-4 m-4 border border-gray-600  rounded-lg shadow-lg'>
-                        <Image src={table.image[0]} alt={table.name} width={200} height={200}/>
-                        <h1 className='p-2 font-bold text-center'>
-                            {table.name}
-                        </h1>
-                        <h2 className='px-2 py-1 text-center'>Length: {table.length}</h2>
-                        <h2 className='px-2 py-1 text-center'>width: {table.width}</h2>
-                    </div>
-                ))
-            }
-        </div>
+      <Box sx={{margin:'2rem'}} >
+          <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm:12, md: 20}}>
+              {data && data.map((item: any, index: React.Key | null | undefined) => (
+                <Grid item xs={2} sm={4} md={4} key={index}>
+                    <ItemCard item={item} onSelect={()=>{}} />
+                </Grid>
+              ))}
+          </Grid>
+      </Box>
     )
 }

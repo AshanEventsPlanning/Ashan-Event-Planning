@@ -9,9 +9,10 @@ type UserParams = {
   };
 
 export async function createUser(params: UserParams) {
+    console.log("params",params)
     await prisma.user.create({
         data: {
-            id: (params.id)? params.id: "",
+            user_id: (params.id)? params.id: "",
             first_name: (params.first_name)? params.first_name: "",
             last_name: (params.last_name)?params.last_name: "",
             email: params.email,

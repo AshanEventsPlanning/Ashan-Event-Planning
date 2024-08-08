@@ -1,14 +1,16 @@
 "use client";
 import { useState } from "react";
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import ShapeRenderer from "@/components/ShapeRenderer";
+import * as React from "react";
 
-export default function SelectSpaceShape({ onSelectShape }) {
+export default function SelectSpaceShape({ onSelectShape, onSeletecInput }) {
   const [shape, setShape] = useState("");
   const [dimensions, setDimensions] = useState({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" });
 
   const handleShapeChange = (event) => {
     setShape(event.target.value);
+    onSeletecInput(true)
     setDimensions({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" }); // Reset dimensions on shape change
   };
 
@@ -82,6 +84,10 @@ export default function SelectSpaceShape({ onSelectShape }) {
                     name="length"
                     size={"small"}
                     style={{ width: '60%' }}
+                    type="number"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="start">m</InputAdornment>
+                    }}
                     value={dimensions.length}
                     onChange={handleDimensionChange} />
                 </div>
@@ -92,6 +98,10 @@ export default function SelectSpaceShape({ onSelectShape }) {
                       name="height"
                       size={"small"}
                       style={{ width: '50%' }}
+                      type="number"
+                      InputProps={{
+                        endAdornment: <InputAdornment position="start">m</InputAdornment>
+                      }}
                       value={dimensions.height}
                       onChange={handleDimensionChange} />
                   </div>
@@ -106,7 +116,10 @@ export default function SelectSpaceShape({ onSelectShape }) {
                   name="radius"
                   size={"small"}
                   style={{ width: '30%' }}
-                  type={'number'}
+                  type="number"
+                  InputProps={{
+                    endAdornment: <InputAdornment position="start">m</InputAdornment>
+                  }}
                   value={dimensions.radius}
                   onChange={handleDimensionChange} />
               </div>
@@ -121,6 +134,9 @@ export default function SelectSpaceShape({ onSelectShape }) {
                     name="length"
                     size={"small"}
                     style={{ width: '60%' }}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="start">m</InputAdornment>
+                    }}
                     value={dimensions.length}
                     onChange={handleDimensionChange} />
                 </div>
@@ -130,6 +146,9 @@ export default function SelectSpaceShape({ onSelectShape }) {
                   name="height"
                   style={{ width: '30%', marginBottom: '3rem' }}
                   size={"small"}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="start">m</InputAdornment>
+                  }}
                   value={dimensions.height}
                   onChange={handleDimensionChange} />
               </div>
@@ -142,6 +161,9 @@ export default function SelectSpaceShape({ onSelectShape }) {
                     label="Length (a)"
                     name="a"
                     size={"small"}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="start">m</InputAdornment>
+                    }}
                     style={{ width: '60%' }}
                     value={dimensions.a}
                     onChange={handleDimensionChange} />
@@ -151,6 +173,9 @@ export default function SelectSpaceShape({ onSelectShape }) {
                     label="Length (b)"
                     name="b"
                     size={"small"}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="start">m</InputAdornment>
+                    }}
                     style={{ width: '60%' }}
                     value={dimensions.b}
                     onChange={handleDimensionChange} />
@@ -161,6 +186,9 @@ export default function SelectSpaceShape({ onSelectShape }) {
                     label="Height (h)"
                     name="h"
                     size={"small"}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="start">m</InputAdornment>
+                    }}
                     style={{ width: '60%' }}
                     value={dimensions.h}
                     onChange={handleDimensionChange} />

@@ -1,7 +1,7 @@
 datasource db {
-  provider          = "postgresql"
+  provider          = "mongodb"
   url               = env("DATABASE_URL")
-  directUrl         = env("DIRECT_URL")
+
 }
 
 generator client {
@@ -9,22 +9,22 @@ generator client {
 }
 
 model Order {
-  id        Int     @id @default(autoincrement())
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
   chair     String
   table     String
-  arrangement String
-  length    Int
-  width     Int
   location  String
   date      String
   time      String
-  noOfArrangements Int
-  user    User    @relation(fields: [userId], references: [id])
+  noOfChairs Int
+  noOfCTables Int
+  totalPrice Float
+  user    User    @relation(fields: [userId], references: [user_id])
   userId  String
 }
 
 model User {
-  id           String    @id
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id String @unique
   first_name   String  
   last_name    String
   email        String

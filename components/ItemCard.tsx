@@ -5,24 +5,26 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 
+// @ts-ignore
 export default function ItemCard({item, onSelect}) {
   return (
-    <Card sx={{ maxWidth: 250 }}>
+    <Card sx={{ maxWidth: 250, border:'1px solid lightgray' }}>
       <CardActionArea onClick={()=>onSelect(item)} >
-        <CardMedia
-          component="img"
-          height="140"
-          image={item.image}
-          alt="green iguana"
-        />
+
+        <img src={item.image}  style={{minHeight:'30vh'}} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {item.name}
           </Typography>
           <div>
-            <span>Length:{item.length}</span>
+            <Typography>{item.price.toLocaleString("en-US", {
+              style: "currency",
+              currency: "LKR",
+            })}</Typography>
             <br/>
-            <span>Width:{item.width}</span>
+            <div>Stock: {item.stock}</div>
+            <span style={{marginRight:'0.8rem'}}>Length: {item.length}m</span>
+            <span>Width: {item.width}m</span>
 
           </div>
         </CardContent>

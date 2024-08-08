@@ -13,20 +13,10 @@ import { getArrangements } from "@/lib/api/arrangement";
 import BoundariesAndObstacles from "@/components/boundariesAndObstacles";
 import Button from "@mui/material/Button";
 import Visualization from "@/components/Visualization";
+import { calculateChairsTables } from "@/lib/api/calculate";
+import * as React from "react";
 
 function InfoForm() {
-
-  const { data: chairs } = useQuery({ queryKey: ["CHAIRS"], queryFn: getChairs });
-  const { data: tables } = useQuery({ queryKey: ["TABLES"], queryFn: getTables });
-  const { data: arrangements } = useQuery({ queryKey: ["ARRANGEMENTS"], queryFn: getArrangements });
-
-  const [noOfArrangements, setNoOfArrangements] = useState<number | null | unknown>(null);
-  const [type, setType] = useState<any>(null);
-  const [spaceDimensions, setSpaceDimensions] = useState<{ length: number; width: number } | null>(null);
-
-  const [chair, setChair] = useState<any>("");
-  const [table, setTable] = useState<any>("");
-
   type InfoFormData = {
     chair: string;
     table: string;
@@ -38,10 +28,27 @@ function InfoForm() {
     time: string;
   };
 
+  const { data: chairs } = useQuery({ queryKey: ["CHAIRS"], queryFn: getChairs });
+  const { data: tables } = useQuery({ queryKey: ["TABLES"], queryFn: getTables });
+  const { data: arrangements } = useQuery({ queryKey: ["ARRANGEMENTS"], queryFn: getArrangements });
+
+  const [chair, setChair] = useState<any>("");
+  const [table, setTable] = useState<any>("");
+  const [reservationData, setReservationData] = useState({
+    location: "",
+    date: "",
+    time: ""
+  });
+  const [showMessage, setShowMessage] = useState(false)
   const [selectedShapes, setSelectedShapes] = useState<any[]>([]);
 
+  const handleReservationDataChange = (e) => {
+    const { name, value } = e.target;
+    setReservationData({...reservationData, [name]: value});
+  }
+
   const handleSelectShapes = (newShape: any) => {
-    setSelectedShapes((prevShapes) => [...prevShapes, { ...newShape, selectedArrangement: null, maxArrangements: 0, spaceAroundArrangement: 0, spaceAroundChair: 0, obstacles: [] }]);
+    setSelectedShapes((prevShapes) => [...prevShapes, { ...newShape, selectedArrangement: null, maxArrangements: 0, noOfArrangements: 0, spaceAroundArrangement: 0, spaceAroundChair: 0, obstacles: [] }]);
   };
 
   const formatDimensions = (shape: any, dimensions: { length: any; height: any; radius: any; a: any; b: any; h: any; }) => {
@@ -74,7 +81,6 @@ function InfoForm() {
       setTable(value);
     }
   };
-
   const handleSelectArrangement = (shapeIndex: number, arrangementId: string) => {
     const selectedValue = arrangements && arrangements.filter((a) => a._id === arrangementId)[0];
     setSelectedShapes((prevShapes) => {
@@ -84,38 +90,126 @@ function InfoForm() {
       if (chair && table && selectedValue) {
         const chairLength = parseInt(chair.length);
         const spaceAroundChair = parseInt(newShapes[shapeIndex].spaceAroundChair) || 0;
-        const chairWidth = parseInt(chair.width)+ (2 * spaceAroundChair);
-        const tableLength = parseInt(table.length)+ (2 * spaceAroundChair);
+        const chairWidth = parseInt(chair.width) + (2 * spaceAroundChair);
+        const tableLength = parseInt(table.length) + (2 * spaceAroundChair);
         const tableWidth = parseInt(table.width);
         const chairsPerTable = selectedValue.chairspertable;
         const spaceAroundArrangement = parseInt(newShapes[shapeIndex].spaceAroundArrangement) || 0;
+
 
         const tableArea = tableLength * tableWidth;
         const unUsableChairArea = (chairWidth * chairWidth) * 4;
         const chairArea = ((tableLength + (2 * chairWidth)) * (tableWidth + (2 * chairWidth))) - (tableArea + unUsableChairArea);
         const totalAreaNeedForChairs = ((chairWidth) * (chairLength )) * chairsPerTable;
 
-
         const arrangementLength = tableLength + (2 * spaceAroundArrangement) + (2 * chairWidth);
         const arrangementWidth = tableWidth + (2 * spaceAroundArrangement) + (2 * chairWidth);
-        const arrangementArea = arrangementLength * arrangementWidth;
 
-        let totalObstacleSpace = 0;
-        newShapes[shapeIndex].obstacles.map((obs: any)=>{
-          totalObstacleSpace = totalObstacleSpace+obs.area
-        })
+        newShapes[shapeIndex].arrangements = [{
+          width: arrangementWidth,
+          length: arrangementLength,
+          count: 3
+        }];
 
-        const shapeArea = newShapes[shapeIndex].area;
-        const shapeAreaWithoutObstacles = shapeArea - totalObstacleSpace;
-        console.log(`shape:${shapeArea}, arr:${arrangementArea}, tabl:${tableArea}, char:${chairArea}, needChar:${totalAreaNeedForChairs}, tab+chair:${((tableLength + (2 * chairWidth)) * (tableWidth + (2 * chairWidth)))}, space:${arrangementArea - ((tableLength + (2 * chairWidth)) * (tableWidth + (2 * chairWidth)))} `);
-        newShapes[shapeIndex].maxArrangements = Math.floor(shapeAreaWithoutObstacles / arrangementArea);
+        // Calculate max arrangements based on shape
+        const shape = newShapes[shapeIndex];
+        let maxArrangements = calculateMaxArrangements(shape, arrangementLength, arrangementWidth);
 
-        if (Math.floor(chairArea / totalAreaNeedForChairs) === 0 || newShapes[shapeIndex].maxArrangements === 0) {
+        // Adjust for obstacles
+        const totalObstacleArea = shape.obstacles.reduce((sum, obs) => sum + obs.area, 0);
+        const obstacleRatio = totalObstacleArea / shape.area;
+        maxArrangements = Math.floor(maxArrangements * (1 - obstacleRatio));
+
+        newShapes[shapeIndex].maxArrangements = maxArrangements;
+
+        if (Math.floor(chairArea / totalAreaNeedForChairs) === 0 || maxArrangements === 0) {
           alert("Can't fit any arrangements");
         }
       }
       return newShapes;
     });
+  };
+
+  const calculateMaxArrangements = (shape: any, arrangementLength: number, arrangementWidth: number): number => {
+    switch (shape.shape) {
+      case "Rectangle":
+      case "Square":
+        return calculateRectangularFit(
+          shape.dimensions.length,
+          shape.dimensions.height || shape.dimensions.length,
+          arrangementLength,
+          arrangementWidth
+        );
+      case "Circle":
+        return calculateCircularFit(
+          shape.dimensions.radius,
+          arrangementLength,
+          arrangementWidth
+        );
+      case "Triangle":
+        return calculateTriangularFit(
+          shape.dimensions.length,
+          shape.dimensions.height,
+          arrangementLength,
+          arrangementWidth
+        );
+      case "Ellipse":
+        return calculateEllipseFit(
+          shape.dimensions.length,
+          shape.dimensions.height,
+          arrangementLength,
+          arrangementWidth
+        );
+      case "Trapezium":
+        return calculateTrapeziumFit(
+          shape.dimensions.a,
+          shape.dimensions.b,
+          shape.dimensions.h,
+          arrangementLength,
+          arrangementWidth
+        );
+      case "Parallelogram":
+        return calculateParallelogramFit(
+          shape.dimensions.length,
+          shape.dimensions.height,
+          arrangementLength,
+          arrangementWidth
+        );
+      default:
+        return Math.floor(shape.area / (arrangementLength * arrangementWidth));
+    }
+  };
+
+  const calculateRectangularFit = (spaceLength: number, spaceWidth: number, itemLength: number, itemWidth: number): number => {
+    const lengthWise = Math.floor(spaceLength / itemLength);
+    const widthWise = Math.floor(spaceWidth / itemWidth);
+    return lengthWise * widthWise;
+  };
+
+  const calculateCircularFit = (radius: number, itemLength: number, itemWidth: number): number => {
+    const diameter = radius * 2;
+    const squareFit = calculateRectangularFit(diameter, diameter, itemLength, itemWidth);
+    return Math.floor(squareFit * 0.78); // Approximate circular area ratio
+  };
+
+  const calculateTriangularFit = (base: number, height: number, itemLength: number, itemWidth: number): number => {
+    const rectangularArea = base * height / 2;
+    return Math.floor(rectangularArea / (itemLength * itemWidth) * 0.65); // Approximation
+  };
+
+  const calculateEllipseFit = (a: number, b: number, itemLength: number, itemWidth: number): number => {
+    const rectangularArea = a * b;
+    return Math.floor(rectangularArea / (itemLength * itemWidth) * 0.78); // Similar to circular approximation
+  };
+
+  const calculateTrapeziumFit = (a: number, b: number, h: number, itemLength: number, itemWidth: number): number => {
+    const area = (a + b) * h / 2;
+    return Math.floor(area / (itemLength * itemWidth) * 0.85); // Approximation
+  };
+
+  const calculateParallelogramFit = (base: number, height: number, itemLength: number, itemWidth: number): number => {
+    const area = base * height;
+    return Math.floor(area / (itemLength * itemWidth) * 0.9); // Approximation
   };
 
   const handleSpaceAroundChange = (shapeIndex: number, data: any) => {
@@ -124,6 +218,7 @@ function InfoForm() {
       newShapes[shapeIndex].spaceAroundArrangement = data.spaceAroundArrangement;
       newShapes[shapeIndex].spaceAroundChair = data.spaceAroundChair;
       newShapes[shapeIndex].obstacles = data.obstacles;
+      newShapes[shapeIndex].selectedArrangement =""
       return newShapes;
     });
   };
@@ -133,117 +228,138 @@ function InfoForm() {
   });
 
   const handleInfoSubmit: SubmitHandler<InfoFormData> = async (data) => {
-    console.log(data);
-    let { table, chair, arrangement, lengthStr, widthStr, location, date, time } = data;
-
-    setType(arrangement);
-    const length = parseInt(lengthStr);
-    const width = parseInt(widthStr);
-    setSpaceDimensions({ length, width });
+    const reportData = {
+      arrangements: selectedShapes,
+      chair: chair,
+      table: table,
+      reservationData: reservationData,
+    };
+    console.log(reportData);
   };
+
+  const handleShowMessage =(state)=>{
+    setShowMessage(state)
+  }
 
   return (
     <FormProvider {...infoForm}>
       <form onSubmit={infoForm.handleSubmit(handleInfoSubmit)}>
-        <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2" style={{ marginBottom: "4rem" }}>
-          <h1 className="text-xl font-semibold mb-6">Space information</h1>
-          <h1 className="text-xl font-semibold mb-6">Select a Chair</h1>
-          <h1 className="text-xl font-semibold mb-6">Select a Table</h1>
-          <SelectSpaceShape onSelectShape={handleSelectShapes} />
-          <SelectionDialog items={chairs && chairs} name={"Select Chair Type"} type={"Chair"}
-                           handleSelect={handleSelect} />
-          <SelectionDialog items={tables && tables} name={"Select Table Type"} type={"Table"}
-                           handleSelect={handleSelect} />
-        </div>
-        <List style={{ width: "100%" }}>
-          {selectedShapes.map((shapeObj, index) => (
-            <ListItem key={index} style={{ width: "100%" }}>
-              <div style={{ marginBottom: "1rem", display: "flex", width: "100%", justifyContent: "space-evenly" }}>
-                <div style={{ flex: 0.5, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <ShapeRenderer shape={shapeObj.shape} dimensions={shapeObj.dimensions} />
-                </div>
-                <div style={{ flex: .7, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Typography style={{ marginRight: "1rem" }}>
-                    {shapeObj.shape} - {formatDimensions(shapeObj.shape, shapeObj.dimensions)} -
-                    Area: {shapeObj.area.toFixed(2)}
-                  </Typography>
-                </div>
-                <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <BoundariesAndObstacles index={index} onChange={handleSpaceAroundChange} shape={shapeObj} />
-                </div>
-                <div style={{ flex: 0.6, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <FormControl style={{ width: "100%" }}>
-                    <InputLabel id="demo-simple-select-label">Select an Arrangement</InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={shapeObj.selectedArrangement ? shapeObj.selectedArrangement._id : ""}
-                      label="Select an Arrangement"
-                      size={"medium"}
-                      onChange={(e) => handleSelectArrangement(index, e.target.value)}
-                    >
-                      {arrangements && arrangements.map((arrangement) => (
-                        <MenuItem key={arrangement._id} value={arrangement._id}>{arrangement.name}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
+        <h1 className="text-xl font-semibold mb-3 mx-9 bg-green-400 p-2 ">Space Parameters</h1>
+        <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2 mx-4" style={{ marginBottom: "2rem" }}>
+          <div className="mt-2" >
+            <h1 className="text-xl font-semibold mb-6 ">Select Shape</h1>
+            <SelectSpaceShape onSelectShape={handleSelectShapes} onSeletecInput={(handleShowMessage)} />
+          </div>
+          <div className="mt-2" >
+            <h1 className="text-xl font-semibold mb-6">Select a Chair</h1>
+            <SelectionDialog items={chairs && chairs} name={"Select Chair Type"} type={"Chair"}
+                             handleSelect={handleSelect} message={showMessage} />
+          </div>
+          <div className="mt-2" >
+            <h1 className="text-xl font-semibold mb-6">Select a Table</h1>
+            <SelectionDialog items={tables && tables} name={"Select Table Type"} type={"Table"}
+                             handleSelect={handleSelect} message={showMessage} />
+          </div>
 
-                <div style={{ flex: 0.3, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Typography>Max: {shapeObj.maxArrangements}</Typography>
-                </div>
-                <div style={{ flex: 0.4, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <TextField label="No of Arrangements" type="number" name="noOfArrangements" />
-                </div>
-                <div style={{ flex: 0.3, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Visualization shape={shapeObj}/>
-                </div>
-              </div>
-            </ListItem>
-          ))}
-        </List>
 
-        <div className="py-2 lg:px-8 rounded-md mt-2 grid lg:grid-cols-3 gap-x-6 ">
-          <h1 className="text-lg font-semibold mb-6">Date & Time</h1>
-          <h1></h1>
-          <h1></h1>
-          <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-2 gap-x-6 lg:mt-2">
-            <TextInput name="location" label="Location" />
+        </div>
+        <div className="mx-10 mt-4">
+          <h1 className="text-lg font-semibold mb-6 bg-green-400 p-2">Space Information</h1>
+          {selectedShapes.length !== 0 ?<List style={{ width: "100%" }}>
+            {selectedShapes.map((shapeObj, index) => (
+              <ListItem key={index} style={{ width: "100%" }}>
+                <div style={{ marginBottom: "1rem", display: "flex", width: "100%", justifyContent: "space-evenly" }}>
+                  <div style={{ flex: 0.5, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <ShapeRenderer shape={shapeObj.shape} dimensions={shapeObj.dimensions} />
+                  </div>
+                  <div style={{ flex: .7, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Typography style={{ marginRight: "1rem" }}>
+                      {shapeObj.shape} - {formatDimensions(shapeObj.shape, shapeObj.dimensions)} -
+                      Area: {shapeObj.area.toFixed(2)}
+                    </Typography>
+                  </div>
+                  <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <BoundariesAndObstacles index={index} onChange={handleSpaceAroundChange} shape={shapeObj} />
+                  </div>
+                  <div style={{ flex: 0.6, display: "flex", justifyContent: "center", alignItems: "center", marginRight:'1rem' }}>
+                    <FormControl style={{ width: "100%" }}>
+                      <InputLabel id="demo-simple-select-label">Select an Arrangement</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={shapeObj.selectedArrangement ? shapeObj.selectedArrangement._id : ""}
+                        label="Select an Arrangement"
+                        size={"medium"}
+                        onChange={(e) => handleSelectArrangement(index, e.target.value)}
+                      >
+                        {arrangements && arrangements.map((arrangement) => (
+                          <MenuItem key={arrangement._id} value={arrangement._id}>{arrangement.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div style={{ flex: 0.4, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <TextField
+                      label="No of Arrangements"
+                      type="number"
+                      fullWidth
+                      placeholder={`Max: ${shapeObj.maxArrangements}`}
+                      name="noOfArrangements"
+                      value={shapeObj.noOfArrangements || 0}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setSelectedShapes((prevShapes) => {
+                          const newShapes = [...prevShapes];
+                          newShapes[index].noOfArrangements = Math.min(Math.max(value, 0), shapeObj.maxArrangements);
+                          return newShapes;
+                        });
+                      }}
+                      inputProps={{
+                        min: 0,
+                        max: shapeObj.maxArrangements,
+                        readOnly: true,
+                        style: {
+                          textAlign: 'center',
+                          MozAppearance: 'textfield',
+                        },
+                      }}
+                      InputProps={{
+                        inputProps: {
+                          style: { textAlign: 'center' }
+                        },
+                        style: {
+                          WebkitAppearance: 'none',
+                          margin: 0
+                        },
+                      }}
+                    />
+                  </div>
+                  <div style={{ flex: 0.3, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Visualization shape={shapeObj}/>
+                  </div>
+                </div>
+              </ListItem>
+            ))}
+          </List>:<div className="flex justify-center italic">No Space Information Available</div>}
+        </div>
+
+        <div className="mx-10 mt-4" >
+          <h1 className="text-lg font-semibold mb-6 bg-green-400 p-2">Reservation Details</h1>
+          <div style={{display:'flex',width: "100%", gap:20}}>
+            <TextField fullWidth margin={'normal'} type='text' label="Location" name="location"  onChange={handleReservationDataChange}  />
+            <TextField fullWidth margin={'normal'} type='date' label="Date" InputLabelProps={{ shrink: true }} name="date" onChange={handleReservationDataChange} />
+            <TextField fullWidth margin={'normal'} type='time' label="Time" InputLabelProps={{ shrink: true }} name="time" onChange={handleReservationDataChange} />
           </div>
-          <div>
-            <label htmlFor="date" className="block text-base font-medium py-2">
-              Date
-            </label>
-            <input
-              type="date"
-              id="date"
-              className="border border-gray-400 rounded-md text-base py-2 px-4 w-full"
-              {...infoForm.register("date")}
-            />
-          </div>
-          <div>
-            <label htmlFor="time" className="block text-base font-medium py-2">
-              Time
-            </label>
-            <input
-              type="time"
-              id="time"
-              className="border border-gray-400 rounded-md text-base py-2 px-4 w-full"
-              {...infoForm.register("time")}
-            />
+          <div style={{marginTop:'3rem', marginBottom:'3rem'}}>
+            <Report order={{
+              arrangements:selectedShapes,
+              chair:chair,
+              table:table,
+              reservationData:reservationData,
+            }} isDisabled={false}  />
           </div>
         </div>
-        <button
-          type="submit"
-          disabled={false}
-          className="block border py-2 text-black rounded-md bg-lime-500 mb-2 mt-8 border-white"
-        >
-          Proceed
-        </button>
       </form>
-      <div>
-        {noOfArrangements !== null && <Report noOfArrangements={noOfArrangements} type={type} />}
-      </div>
     </FormProvider>
   );
 }

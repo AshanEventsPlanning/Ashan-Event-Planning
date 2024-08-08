@@ -5,7 +5,7 @@ import { createUser } from '@/server/infrastructure/repositories/user-repository
 
 
 export async function POST(req: Request) {
- 
+
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
  
@@ -58,9 +58,6 @@ export async function POST(req: Request) {
     const email = evt.data.email_addresses[0].email_address
     await createUser({id,first_name,last_name, image_url,email})
   }
- 
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
-  console.log('Webhook body:', body)
  
   return new Response('', { status: 200 })
 }

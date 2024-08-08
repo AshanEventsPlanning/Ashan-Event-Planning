@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prismapush": "prisma db push",
+    "prismastudio": "prisma studio"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.0.1",
@@ -26,6 +28,7 @@
     "prisma": "^5.12.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-draggable": "^4.4.6",
     "react-hook-form": "^7.45.2",
     "react-query": "^3.39.3",
     "svix": "^1.21.0",
