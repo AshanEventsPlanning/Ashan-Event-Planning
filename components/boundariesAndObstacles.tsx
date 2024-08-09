@@ -97,7 +97,7 @@ export default function BoundariesAndObstacles({ index, onChange, shape }) {
 
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen} sx={{ mx: "1rem" }}>
+      <Button variant="outlined" onClick={handleClickOpen} sx={{ mx: "1rem", height:'6.5vh' }}>
         Set Boundaries & Obstacles
       </Button>
       <Dialog
@@ -149,6 +149,7 @@ export default function BoundariesAndObstacles({ index, onChange, shape }) {
                   label="Obstacle Name"
                   type="text"
                   name="name"
+                  placeholder="eg: Tree"
                   value={obstacle.name}
                   onChange={handleObstacleInputs}
                 />
@@ -220,6 +221,7 @@ export default function BoundariesAndObstacles({ index, onChange, shape }) {
                   ))}
                 </TableBody>
               </Table>
+              {obstacles.length ===0 && <center><div style={{display:'flex', justifyContent:'center', fontStyle:"italic", padding:'2rem'}} >No Obstacles Added</div></center>}
             </TableContainer>
           </Box>
         </DialogContent>

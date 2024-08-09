@@ -47,8 +47,8 @@ export default function Visualization({ shape }: { shape: Shape }) {
 
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Visualization
+      <Button  onClick={handleClickOpen}>
+        {"Visualization"}
       </Button>
       <Dialog
         fullScreen

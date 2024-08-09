@@ -7,7 +7,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import OrderTable from "@/components/OrderTable";
-import { Box } from "@mui/material";
+import { Alert, Box, Snackbar, SnackbarCloseReason } from "@mui/material";
 import { createNewOrder } from "@/lib/api/order";
 
 const TAX_RATE = 0.07;
@@ -65,6 +65,26 @@ export default function Report({order, isDisabled}) {
   const handleCloseReport = () => {
     setOpenReport(false);
   };
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [alertType, setAlertType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
+  const [alertMessage, setAlertMessage] = useState("")
+
+  const handleClick = (type:'success' | 'error' | 'warning' | 'info', message:string) => {
+    setAlertType(type);
+    setAlertMessage(message);
+    setOpenAlert(true);
+  };
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenAlert(false);
+  };
 
   const placeOrder=async ()=>{
     const data={
@@ -79,7 +99,12 @@ export default function Report({order, isDisabled}) {
       status:"Not Returned"
     }
     try {
-      await createNewOrder(data,order.chair, order.table, noOfChairs, noOfTables);
+      const res = await createNewOrder(data,order.chair, order.table, noOfChairs, noOfTables);
+      if(res.success){
+        handleClick("success","Order Placed Successfully")
+      }else {
+        handleClick("error", "Can't exceed the item Stock count.")
+      }
       handleCloseReport()
     }catch (err){
       console.log(err)
@@ -126,6 +151,16 @@ export default function Report({order, isDisabled}) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={alertType}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 }

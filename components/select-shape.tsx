@@ -5,12 +5,12 @@ import * as React from "react";
 
 // @ts-ignore
 export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
-  const [shape, setShape] = useState("");
+  const [shape, setShape] = useState("Square");
   const [dimensions, setDimensions] = useState({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" });
 
   const handleShapeChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setShape(event.target.value);
-    onSelectInput(true)
+    onSelectInput(true);
     setDimensions({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" });
   };
 
@@ -20,6 +20,26 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
       ...prevDimensions,
       [name]: value
     }));
+  };
+
+  const isFormValid = () => {
+    switch (shape) {
+      case "Square":
+        return dimensions.length !== "";
+      case "Rectangle":
+      case "Parallelogram":
+        return dimensions.length !== "" && dimensions.height !== "";
+      case "Triangle":
+        return dimensions.length !== "" && dimensions.height !== "";
+      case "Circle":
+        return dimensions.radius !== "";
+      case "Ellipse":
+        return dimensions.length !== "" && dimensions.height !== "";
+      case "Trapezium":
+        return dimensions.a !== "" && dimensions.b !== "" && dimensions.h !== "";
+      default:
+        return false;
+    }
   };
 
   const calculateArea = () => {
@@ -53,8 +73,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
   const handleAddShape = () => {
     const area = calculateArea();
     const newShape = { shape, dimensions: { ...dimensions }, area };
-    onSelectShape(newShape)
-    setShape("");
+    onSelectShape(newShape);
     setDimensions({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" }); // Reset dimensions
   };
 
@@ -67,6 +86,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
           id="demo-simple-select"
           value={shape}
           label="Select Area Shape"
+          placeholder="eg: Square"
           onChange={handleShapeChange}
         >
           <MenuItem value="Square">Square</MenuItem>
@@ -80,7 +100,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
       </FormControl>
 
       {shape && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:"space-between", height:'41vh' }}>
           <div>
             {["Square", "Rectangle", "Parallelogram", "Ellipse"].includes(shape) && (
               <div style={{ display: 'flex', alignItems: 'center', padding: '1rem' }}>
@@ -104,7 +124,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
                       label="Height"
                       name="height"
                       size={"small"}
-                      style={{ width: '50%' }}
+                      style={{ width: '60%' }}
                       type="number"
                       InputProps={{
                         endAdornment: <InputAdornment position="start">m</InputAdornment>
@@ -140,7 +160,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
                     label="Base Length"
                     name="length"
                     size={"small"}
-                    style={{ width: '60%' }}
+                    style={{ width: '70%' }}
                     InputProps={{
                       endAdornment: <InputAdornment position="start">m</InputAdornment>
                     }}
@@ -171,7 +191,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
                     InputProps={{
                       endAdornment: <InputAdornment position="start">m</InputAdornment>
                     }}
-                    style={{ width: '60%' }}
+                    style={{ width: '70%' }}
                     value={dimensions.a}
                     onChange={handleDimensionChange} />
                   <img src={`/shapes/${shape}.png`} alt="shape" style={{ width: 200, height: 200 }} />
@@ -183,7 +203,7 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
                     InputProps={{
                       endAdornment: <InputAdornment position="start">m</InputAdornment>
                     }}
-                    style={{ width: '60%' }}
+                    style={{ width: '70%' }}
                     value={dimensions.b}
                     onChange={handleDimensionChange} />
                 </div>
@@ -196,14 +216,14 @@ export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
                     InputProps={{
                       endAdornment: <InputAdornment position="start">m</InputAdornment>
                     }}
-                    style={{ width: '60%' }}
+                    style={{ width: '70%' }}
                     value={dimensions.h}
                     onChange={handleDimensionChange} />
                 </div>
               </div>
             )}
           </div>
-          <Button fullWidth variant='outlined' style={{ bottom: 0 }} color={'success'} onClick={handleAddShape}>Add</Button>
+          <Button fullWidth variant='outlined' style={{ bottom: 0 }} color={'success'} onClick={handleAddShape} disabled={!isFormValid()}>Add</Button>
         </div>
       )}
     </div>

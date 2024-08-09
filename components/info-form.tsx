@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Report from "./report";
+import * as React from "react";
 import { useState } from "react";
 import { getChairs } from "@/lib/api/chair";
 import { getTables } from "@/lib/api/table";
-import { FormControl, InputLabel, List, ListItem, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box, FormControl, InputLabel, List, ListItem, MenuItem, Select, TextField, Typography } from "@mui/material";
 import SelectSpaceShape from "@/components/select-shape";
 import SelectionDialog from "@/components/selection-dialog";
 import ShapeRenderer from "@/components/ShapeRenderer";
 import { getArrangements } from "@/lib/api/arrangement";
 import BoundariesAndObstacles from "@/components/boundariesAndObstacles";
 import Visualization from "@/components/Visualization";
-import * as React from "react";
 
 function InfoForm() {
   type InfoFormData = {
@@ -36,13 +36,13 @@ function InfoForm() {
     date: "",
     time: ""
   });
-  const [showMessage, setShowMessage] = useState(false)
+  const [showMessage, setShowMessage] = useState(false);
   const [selectedShapes, setSelectedShapes] = useState<any[]>([]);
 
   const handleReservationDataChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
-    setReservationData({...reservationData, [name]: value});
-  }
+    setReservationData({ ...reservationData, [name]: value });
+  };
 
   const handleSelectShapes = (newShape: any) => {
     setSelectedShapes((prevShapes) => [...prevShapes, { ...newShape, selectedArrangement: null, maxArrangements: 0, noOfArrangements: 0, spaceAroundArrangement: 0, spaceAroundChair: 0, obstacles: [] }]);
@@ -97,7 +97,7 @@ function InfoForm() {
         const tableArea = tableLength * tableWidth;
         const unUsableChairArea = (chairWidth * chairWidth) * 4;
         const chairArea = ((tableLength + (2 * chairWidth)) * (tableWidth + (2 * chairWidth))) - (tableArea + unUsableChairArea);
-        const totalAreaNeedForChairs = ((chairWidth) * (chairLength )) * chairsPerTable;
+        const totalAreaNeedForChairs = ((chairWidth) * (chairLength)) * chairsPerTable;
 
         const arrangementLength = tableLength + (2 * spaceAroundArrangement) + (2 * chairWidth);
         const arrangementWidth = tableWidth + (2 * spaceAroundArrangement) + (2 * chairWidth);
@@ -108,11 +108,9 @@ function InfoForm() {
           count: 3
         }];
 
-        // Calculate max arrangements based on shape
         const shape = newShapes[shapeIndex];
         let maxArrangements = calculateMaxArrangements(shape, arrangementLength, arrangementWidth);
 
-        // Adjust for obstacles
         const totalObstacleArea = shape.obstacles.reduce((sum: any, obs: { area: any; }) => sum + obs.area, 0);
         const obstacleRatio = totalObstacleArea / shape.area;
         maxArrangements = Math.floor(maxArrangements * (1 - obstacleRatio));
@@ -176,49 +174,44 @@ function InfoForm() {
         return Math.floor(shape.area / (arrangementLength * arrangementWidth));
     }
   };
-
   const calculateRectangularFit = (spaceLength: number, spaceWidth: number, itemLength: number, itemWidth: number): number => {
     const lengthWise = Math.floor(spaceLength / itemLength);
     const widthWise = Math.floor(spaceWidth / itemWidth);
     return lengthWise * widthWise;
   };
-
   const calculateCircularFit = (radius: number, itemLength: number, itemWidth: number): number => {
     const diameter = radius * 2;
     const squareFit = calculateRectangularFit(diameter, diameter, itemLength, itemWidth);
     return Math.floor(squareFit * 0.78); // Approximate circular area ratio
   };
-
   const calculateTriangularFit = (base: number, height: number, itemLength: number, itemWidth: number): number => {
     const rectangularArea = base * height / 2;
     return Math.floor(rectangularArea / (itemLength * itemWidth) * 0.65); // Approximation
   };
-
   const calculateEllipseFit = (a: number, b: number, itemLength: number, itemWidth: number): number => {
     const rectangularArea = a * b;
     return Math.floor(rectangularArea / (itemLength * itemWidth) * 0.78); // Similar to circular approximation
   };
-
   const calculateTrapeziumFit = (a: number, b: number, h: number, itemLength: number, itemWidth: number): number => {
     const area = (a + b) * h / 2;
     return Math.floor(area / (itemLength * itemWidth) * 0.85); // Approximation
   };
-
   const calculateParallelogramFit = (base: number, height: number, itemLength: number, itemWidth: number): number => {
     const area = base * height;
     return Math.floor(area / (itemLength * itemWidth) * 0.9); // Approximation
   };
-
   const handleSpaceAroundChange = (shapeIndex: number, data: any) => {
     setSelectedShapes((prevShapes) => {
       const newShapes = [...prevShapes];
       newShapes[shapeIndex].spaceAroundArrangement = data.spaceAroundArrangement;
       newShapes[shapeIndex].spaceAroundChair = data.spaceAroundChair;
       newShapes[shapeIndex].obstacles = data.obstacles;
-      newShapes[shapeIndex].selectedArrangement =""
+      newShapes[shapeIndex].selectedArrangement = "";
+      newShapes[shapeIndex].noOfArrangements=0
       return newShapes;
     });
   };
+
 
   const infoForm = useForm<InfoFormData>({
     mode: "onChange"
@@ -229,30 +222,31 @@ function InfoForm() {
       arrangements: selectedShapes,
       chair: chair,
       table: table,
-      reservationData: reservationData,
+      reservationData: reservationData
     };
     console.log(reportData);
   };
 
-  const handleShowMessage =(state: boolean | ((prevState: boolean) => boolean))=>{
-    setShowMessage(state)
-  }
+  const handleShowMessage = (state: boolean | ((prevState: boolean) => boolean)) => {
+    setShowMessage(state);
+  };
 
   return (
     <FormProvider {...infoForm}>
       <form onSubmit={infoForm.handleSubmit(handleInfoSubmit)}>
         <h1 className="text-xl font-semibold mb-3 mx-9 bg-green-400 p-2 ">Space Parameters</h1>
-        <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2 mx-4" style={{ marginBottom: "2rem" }}>
-          <div className="mt-2" >
+        <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2 mx-4"
+             style={{ marginBottom: "2rem" }}>
+          <div className="mt-2">
             <h1 className="text-xl font-semibold mb-6 ">Select Shape</h1>
             <SelectSpaceShape onSelectShape={handleSelectShapes} onSelectInput={(handleShowMessage)} />
           </div>
-          <div className="mt-2" >
+          <div className="mt-2">
             <h1 className="text-xl font-semibold mb-6">Select a Chair</h1>
             <SelectionDialog items={chairs && chairs} name={"Select Chair Type"} type={"Chair"}
                              handleSelect={handleSelect} message={showMessage} />
           </div>
-          <div className="mt-2" >
+          <div className="mt-2">
             <h1 className="text-xl font-semibold mb-6">Select a Table</h1>
             <SelectionDialog items={tables && tables} name={"Select Table Type"} type={"Table"}
                              handleSelect={handleSelect} message={showMessage} />
@@ -262,23 +256,33 @@ function InfoForm() {
         </div>
         <div className="mx-10 mt-4">
           <h1 className="text-lg font-semibold mb-6 bg-green-400 p-2">Space Information</h1>
-          {selectedShapes.length !== 0 ?<List style={{ width: "100%" }}>
+          {selectedShapes.length !== 0 ? <List style={{ width: "100%" }}>
             {selectedShapes.map((shapeObj, index) => (
-              <ListItem key={index} style={{ width: "100%" }}>
+              <ListItem key={index} style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+                <div style={{ borderBottom: "1px solid", display: "flex", width: "100%", marginBottom: "0.5rem", justifyContent:'space-between' }}>
+                  <Box
+                    style={{ borderRadius: "0 10px 0 0", padding: "0.5rem", paddingBottom: "0.1rem", fontWeight: "bold", backgroundColor: "rgb(25,125,215)", color: "white" }}>
+                    {shapeObj.shape}
+                  </Box>
+                  <div>
+                    <Visualization shape={shapeObj} />
+                  </div>
+                </div>
                 <div style={{ marginBottom: "1rem", display: "flex", width: "100%", justifyContent: "space-evenly" }}>
-                  <div style={{ flex: 0.5, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <div style={{ flex: 0.3, display: "flex", alignItems: "center" }}>
                     <ShapeRenderer shape={shapeObj.shape} dimensions={shapeObj.dimensions} />
                   </div>
-                  <div style={{ flex: .7, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <div style={{ flex: 0.5, display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Typography style={{ marginRight: "1rem" }}>
-                      {shapeObj.shape} - {formatDimensions(shapeObj.shape, shapeObj.dimensions)} -
+                      {formatDimensions(shapeObj.shape, shapeObj.dimensions)} -
                       Area: {shapeObj.area.toFixed(2)}
                     </Typography>
                   </div>
                   <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <BoundariesAndObstacles index={index} onChange={handleSpaceAroundChange} shape={shapeObj} />
                   </div>
-                  <div style={{ flex: 0.6, display: "flex", justifyContent: "center", alignItems: "center", marginRight:'1rem' }}>
+                  <div
+                    style={{ flex: 0.6, display: "flex", justifyContent: "center", alignItems: "center", marginRight: "1rem" }}>
                     <FormControl style={{ width: "100%" }}>
                       <InputLabel id="demo-simple-select-label">Select an Arrangement</InputLabel>
                       <Select
@@ -300,8 +304,10 @@ function InfoForm() {
                       label="No of Arrangements"
                       type="number"
                       fullWidth
+                      style={{marginTop:'1rem'}}
                       placeholder={`Max: ${shapeObj.maxArrangements}`}
                       name="noOfArrangements"
+                      helperText={`Max Arrangements: ${shapeObj.maxArrangements} `}
                       value={shapeObj.noOfArrangements || 0}
                       onChange={(e) => {
                         const value = parseInt(e.target.value);
@@ -331,29 +337,30 @@ function InfoForm() {
                       }}
                     />
                   </div>
-                  <div style={{ flex: 0.3, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <Visualization shape={shapeObj}/>
-                  </div>
+
                 </div>
               </ListItem>
             ))}
-          </List>:<div className="flex justify-center italic">No Space Information Available</div>}
+          </List> : <div className="flex justify-center italic">No Space Information Available</div>}
         </div>
 
-        <div className="mx-10 mt-4" >
+        <div className="mx-10 mt-4">
           <h1 className="text-lg font-semibold mb-6 bg-green-400 p-2">Reservation Details</h1>
-          <div style={{display:'flex',width: "100%", gap:20}}>
-            <TextField fullWidth margin={'normal'} type='text' label="Location" name="location"  onChange={handleReservationDataChange}  />
-            <TextField fullWidth margin={'normal'} type='date' label="Date" InputLabelProps={{ shrink: true }} name="date" onChange={handleReservationDataChange} />
-            <TextField fullWidth margin={'normal'} type='time' label="Time" InputLabelProps={{ shrink: true }} name="time" onChange={handleReservationDataChange} />
+          <div style={{ display: "flex", width: "100%", gap: 20 }}>
+            <TextField fullWidth margin={"normal"} type="text" label="Location" name="location" placeholder="eg: Havelock Town"
+                       onChange={handleReservationDataChange} />
+            <TextField fullWidth margin={"normal"} type="date" label="Date" InputLabelProps={{ shrink: true }}
+                       name="date" onChange={handleReservationDataChange} />
+            <TextField fullWidth margin={"normal"} type="time" label="Time" InputLabelProps={{ shrink: true }}
+                       name="time" onChange={handleReservationDataChange} />
           </div>
-          <div style={{marginTop:'3rem', marginBottom:'3rem'}}>
+          <div style={{ marginTop: "3rem", marginBottom: "3rem" }}>
             <Report order={{
-              arrangements:selectedShapes,
-              chair:chair,
-              table:table,
-              reservationData:reservationData,
-            }} isDisabled={false}  />
+              arrangements: selectedShapes,
+              chair: chair,
+              table: table,
+              reservationData: reservationData
+            }} isDisabled={false} />
           </div>
         </div>
       </form>
