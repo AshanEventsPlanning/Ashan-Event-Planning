@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import TextInput from "./text-input";
 import Report from "./report";
 import { useState } from "react";
 import { getChairs } from "@/lib/api/chair";
@@ -11,9 +10,7 @@ import SelectionDialog from "@/components/selection-dialog";
 import ShapeRenderer from "@/components/ShapeRenderer";
 import { getArrangements } from "@/lib/api/arrangement";
 import BoundariesAndObstacles from "@/components/boundariesAndObstacles";
-import Button from "@mui/material/Button";
 import Visualization from "@/components/Visualization";
-import { calculateChairsTables } from "@/lib/api/calculate";
 import * as React from "react";
 
 function InfoForm() {
@@ -248,7 +245,7 @@ function InfoForm() {
         <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2 mx-4" style={{ marginBottom: "2rem" }}>
           <div className="mt-2" >
             <h1 className="text-xl font-semibold mb-6 ">Select Shape</h1>
-            <SelectSpaceShape onSelectShape={handleSelectShapes} onSeletecInput={(handleShowMessage)} />
+            <SelectSpaceShape onSelectShape={handleSelectShapes} onSelectInput={(handleShowMessage)} />
           </div>
           <div className="mt-2" >
             <h1 className="text-xl font-semibold mb-6">Select a Chair</h1>

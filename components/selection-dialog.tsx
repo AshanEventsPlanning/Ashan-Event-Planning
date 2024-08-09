@@ -1,9 +1,5 @@
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -15,8 +11,9 @@ import { Box, Grid } from "@mui/material";
 import ItemCard from "@/components/ItemCard";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="up" ref={ref} {...props}/>;
 });
+// @ts-ignore
 export default function SelectionDialog({items, name , type, handleSelect, message}) {
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null)
@@ -24,7 +21,7 @@ export default function SelectionDialog({items, name , type, handleSelect, messa
     setOpen(true);
   };
 
-  const handleItemSelect = (item)=>{
+  const handleItemSelect = (item: React.SetStateAction<null>)=>{
     setSelectedItem(item);
     handleSelect({type:type, value:item})
     handleClose()
@@ -40,7 +37,7 @@ export default function SelectionDialog({items, name , type, handleSelect, messa
           {name}
         </Button>
         {message === true && <Box style={{border:'1px solid', height:'100%', maxHeight:'40vh', display:'flex', flexDirection:'column', justifyContent:'center',alignItems:'center', padding:'1rem'}} >
-          {selectedItem !== null ? <ItemCard item={selectedItem} />:<div>No Item Selected</div>}
+          {selectedItem !== null ? <ItemCard item={selectedItem} onSelect={()=>{}} />:<div>No Item Selected</div>}
         </Box>}
       </Box>
       <Dialog

@@ -6,21 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useEffect, useState } from "react";
 
 const TAX_RATE = 0.07;
 
 function ccyFormat(num: number) {
   return `${num.toFixed(2)}`;
-}
-
-function priceRow(qty: number, unit: number) {
-  return qty * unit;
-}
-
-function createRow(arrangement: string, qty: number, unit: number) {
-  const price = priceRow(qty, unit);
-  return { arrangement, qty, unit, price };
 }
 
 interface Row {

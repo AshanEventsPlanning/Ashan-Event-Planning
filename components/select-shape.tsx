@@ -1,20 +1,20 @@
 "use client";
 import { useState } from "react";
 import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import ShapeRenderer from "@/components/ShapeRenderer";
 import * as React from "react";
 
-export default function SelectSpaceShape({ onSelectShape, onSeletecInput }) {
+// @ts-ignore
+export default function SelectSpaceShape({ onSelectShape, onSelectInput }) {
   const [shape, setShape] = useState("");
   const [dimensions, setDimensions] = useState({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" });
 
-  const handleShapeChange = (event) => {
+  const handleShapeChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setShape(event.target.value);
-    onSeletecInput(true)
-    setDimensions({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" }); // Reset dimensions on shape change
+    onSelectInput(true)
+    setDimensions({ length: "", height: "", radius: "", width: "", a: "", b: "", h: "" });
   };
 
-  const handleDimensionChange = (event) => {
+  const handleDimensionChange = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
     setDimensions((prevDimensions) => ({
       ...prevDimensions,
@@ -25,18 +25,25 @@ export default function SelectSpaceShape({ onSelectShape, onSeletecInput }) {
   const calculateArea = () => {
     switch (shape) {
       case "Square":
+        // @ts-ignore
         return dimensions.length * dimensions.length;
       case "Rectangle":
+        // @ts-ignore
         return dimensions.length * dimensions.height;
       case "Triangle":
+        // @ts-ignore
         return (dimensions.length * dimensions.height) / 2;
       case "Circle":
+        // @ts-ignore
         return Math.PI * dimensions.radius * dimensions.radius;
       case "Ellipse":
+        // @ts-ignore
         return Math.PI * dimensions.length * dimensions.height;
       case "Trapezium":
+        // @ts-ignore
         return ((parseFloat(dimensions.a) + parseFloat(dimensions.b)) * dimensions.h) / 2;
       case "Parallelogram":
+        // @ts-ignore
         return dimensions.length * dimensions.height;
       default:
         return 0;

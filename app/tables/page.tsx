@@ -1,7 +1,6 @@
 'use client'
 import { getTables } from '@/lib/api/table'
 import { useQuery } from '@tanstack/react-query'
-import Image from 'next/image'
 import { Box, Grid } from "@mui/material";
 import React from "react";
 import ItemCard from "@/components/ItemCard";

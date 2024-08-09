@@ -1,4 +1,3 @@
-// Visualization.tsx
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -15,6 +14,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+// @ts-ignore
 export default function Visualization({ shape }) {
   const [open, setOpen] = useState(false);
   const [size, setSize] = useState(700);
@@ -27,7 +27,7 @@ export default function Visualization({ shape }) {
     setOpen(false);
   };
 
-  function valuetext(value) {
+  function valuetext(value: any) {
     return value;
   }
 

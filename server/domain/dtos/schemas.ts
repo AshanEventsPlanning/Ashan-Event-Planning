@@ -65,5 +65,6 @@ export const createOrderDTO = z.object({
     totalPrice: z.number(),
     location: z.string(),
     date: z.string(),
-    time: z.string(),
+  time: z.string(),
+  status: z.string(),
 })

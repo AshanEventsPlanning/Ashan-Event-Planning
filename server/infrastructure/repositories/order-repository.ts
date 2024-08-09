@@ -1,5 +1,4 @@
 import prisma from "../clients/prisma";
-import { User } from ".prisma/client";
 
 type OrderParams = {
   chair: string|null,
@@ -10,11 +9,11 @@ type OrderParams = {
   noOfChairs: number,
   noOfCTables: number,
   totalPrice: number,
-  userId: string
+  userId: string,
+  status:string
 };
 
 export async function createOrder(params: OrderParams) {
-  console.log("params",params)
   await prisma.order.create({
     data: {
       chair:params.chair?params.chair:"",
@@ -25,7 +24,8 @@ export async function createOrder(params: OrderParams) {
       noOfChairs:params.noOfChairs?params.noOfChairs:0,
       noOfCTables:params.noOfCTables?params.noOfCTables:0,
       totalPrice:params.totalPrice?params.totalPrice:0,
-      userId:params.userId
+      userId:params.userId,
+      status:params.status
     }
   });
 }
