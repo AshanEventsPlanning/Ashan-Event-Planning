@@ -66,7 +66,7 @@ export default function Visualization({ shape }) {
                 step={50}
                 min={100}
                 max={1200}
-                onChange={(e) => setSize(e.target.value)}
+                onChange={(e) => setSize(e.target?.value)}
               />
             </div>
           </Toolbar>

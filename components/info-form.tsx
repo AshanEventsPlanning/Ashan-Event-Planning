@@ -39,7 +39,7 @@ function InfoForm() {
   const [showMessage, setShowMessage] = useState(false)
   const [selectedShapes, setSelectedShapes] = useState<any[]>([]);
 
-  const handleReservationDataChange = (e) => {
+  const handleReservationDataChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setReservationData({...reservationData, [name]: value});
   }
@@ -113,7 +113,7 @@ function InfoForm() {
         let maxArrangements = calculateMaxArrangements(shape, arrangementLength, arrangementWidth);
 
         // Adjust for obstacles
-        const totalObstacleArea = shape.obstacles.reduce((sum, obs) => sum + obs.area, 0);
+        const totalObstacleArea = shape.obstacles.reduce((sum: any, obs: { area: any; }) => sum + obs.area, 0);
         const obstacleRatio = totalObstacleArea / shape.area;
         maxArrangements = Math.floor(maxArrangements * (1 - obstacleRatio));
 
@@ -234,7 +234,7 @@ function InfoForm() {
     console.log(reportData);
   };
 
-  const handleShowMessage =(state)=>{
+  const handleShowMessage =(state: boolean | ((prevState: boolean) => boolean))=>{
     setShowMessage(state)
   }
 

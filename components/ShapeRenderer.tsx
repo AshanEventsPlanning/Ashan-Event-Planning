@@ -16,7 +16,7 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
     marginRight: "10px",
   };
   const [imagePosition, setImagePosition] = useState({ x: 1, y: 1 });
-  const renderArrangements = (position) => {
+  const renderArrangements = (position: { x:number, y:number }) => {
     return arrangements.map((arrangement, index) => {
       const { width, length, x, y } = arrangement;
       const ratio = (width * length) / (dimensions.length * dimensions.length);
@@ -44,8 +44,11 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
         <svg style={svgStyle} viewBox="0 0 100 100">
           <rect width="100" height="100" fill="lightblue" />
           {Array.from({ length: noOfArrangements}).map((_, index) => {
-            const width = arrangements.length !==0 && (arrangements[0].length/ dimensions.length)*100
-            return renderArrangements({ x: 0+(width+(index*30)), y: 1 })
+            let width:number=0 ;
+            if(arrangements.length !==0) {
+              width = (arrangements[0].length/ dimensions.length)*100;
+            }
+            return renderArrangements({ x: (width + (index * 30)), y: 1 })
           })}
         </svg>
       );
@@ -57,8 +60,11 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
           <svg style={{ width: '100%', height: '100%' }} viewBox={`0 0 100 ${rectHeight}`}>
             <rect width={rectWidth} height={rectHeight} fill="lightgreen" />
             {Array.from({ length: noOfArrangements}).map((_, index) => {
-              const width = arrangements.length !==0 && (arrangements[0].length/ dimensions.length)*100
-              return renderArrangements({ x: 0+(width+(index*30)), y: 1 })
+              let width:number=0 ;
+              if(arrangements.length !==0) {
+                width = (arrangements[0].length/ dimensions.length)*100;
+              }
+              return renderArrangements({ x: (width + (index * 30)), y: 1 })
             })}
           </svg>
 
@@ -70,7 +76,7 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
           <svg style={{ width: '100%', height: '100%' }} viewBox="0 0 100 100">
             <polygon points="0,100 50,0 100,100" fill="yellow" />
           </svg>
-          {renderArrangements()}
+
         </div>
       );
     case "Circle":
@@ -79,7 +85,7 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
           <svg style={{ width: '100%', height: '100%' }} viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="50" fill="lightpink" />
           </svg>
-          {renderArrangements()}
+
         </div>
       );
     case "Ellipse":
@@ -89,7 +95,7 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
           <svg style={{ width: '100%', height: '100%' }} viewBox={`0 0 100 ${100 * ryRatio}`}>
             <ellipse cx="50" cy={50 * ryRatio} rx="50" ry={50 * ryRatio} fill="lavender" />
           </svg>
-          {renderArrangements()}
+
         </div>
       );
     case "Trapezium":
@@ -108,7 +114,7 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
               fill="lightsalmon"
             />
           </svg>
-          {renderArrangements()}
+
         </div>
       );
     case "Parallelogram":
@@ -124,7 +130,7 @@ const ShapeRenderer: React.FC<ShapeRendererProps> = ({ shape, dimensions, arrang
               fill="lightcoral"
             />
           </svg>
-          {renderArrangements()}
+
         </div>
       );
     default:

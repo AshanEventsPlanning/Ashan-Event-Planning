@@ -30,6 +30,7 @@ type Obstacle = {
   area:number
 }
 
+// @ts-ignore
 export default function BoundariesAndObstacles({ index, onChange, shape }) {
   const [open, setOpen] = React.useState(false);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
@@ -58,6 +59,7 @@ export default function BoundariesAndObstacles({ index, onChange, shape }) {
   const handleAddObstacle = () => {
     obstacle.area = parseFloat(obstacle.width)*parseFloat(obstacle.length)
     const newObstacles = [...obstacles, obstacle];
+    // @ts-ignore
     setObstacles(newObstacles);
     setObstacle({
       name: "",
