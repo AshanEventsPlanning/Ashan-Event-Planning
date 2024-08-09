@@ -1,3 +1,4 @@
+import React, { useState, forwardRef, Ref, SetStateAction } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
@@ -5,13 +6,15 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@mui/material/Slide';
-import React,{ useState } from "react";
-import { Box, Grid } from "@mui/material";
-import ItemCard from "@/components/ItemCard";
+import Slide, { SlideProps } from '@mui/material/Slide';
+import { Box, Grid } from '@mui/material';
+import ItemCard from '@/components/ItemCard';
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props}/>;
+const Transition = forwardRef(function Transition(
+  props: SlideProps & { children: React.ReactElement<any, any> },
+  ref: Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 // @ts-ignore
 export default function SelectionDialog({items, name , type, handleSelect, message}) {
