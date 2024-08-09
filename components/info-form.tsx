@@ -12,6 +12,9 @@ import ShapeRenderer from "@/components/ShapeRenderer";
 import { getArrangements } from "@/lib/api/arrangement";
 import BoundariesAndObstacles from "@/components/boundariesAndObstacles";
 import Visualization from "@/components/Visualization";
+import Button from "@mui/material/Button";
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 function InfoForm() {
   type InfoFormData = {
@@ -51,19 +54,19 @@ function InfoForm() {
   const formatDimensions = (shape: any, dimensions: { length: any; height: any; radius: any; a: any; b: any; h: any; }) => {
     switch (shape) {
       case "Square":
-        return `Length: ${dimensions.length}`;
+        return `Length: ${dimensions.length}m`;
       case "Rectangle":
-        return `Length: ${dimensions.length}, Height: ${dimensions.height}`;
+        return `Length: ${dimensions.length}m, Height: ${dimensions.height}m`;
       case "Triangle":
-        return `Base Length: ${dimensions.length}, Height: ${dimensions.height}`;
+        return `Base Length: ${dimensions.length}m, Height: ${dimensions.height}m`;
       case "Circle":
-        return `Radius: ${dimensions.radius}`;
+        return `Radius: ${dimensions.radius}m`;
       case "Ellipse":
-        return `Length: ${dimensions.length}, Height: ${dimensions.height}`;
+        return `Length: ${dimensions.length}m, Height: ${dimensions.height}m`;
       case "Trapezium":
-        return `Length (a): ${dimensions.a}, Length (b): ${dimensions.b}, Height: ${dimensions.h}`;
+        return `Length (a): ${dimensions.a}m, Length (b): ${dimensions.b}m, Height: ${dimensions.h}m`;
       case "Parallelogram":
-        return `Length: ${dimensions.length}, Height: ${dimensions.height}`;
+        return `Length: ${dimensions.length}m, Height: ${dimensions.height}m`;
       default:
         return "";
     }
@@ -78,6 +81,7 @@ function InfoForm() {
       setTable(value);
     }
   };
+
   const handleSelectArrangement = (shapeIndex: number, arrangementId: string) => {
     const selectedValue = arrangements && arrangements.filter((a) => a._id === arrangementId)[0];
     setSelectedShapes((prevShapes) => {
@@ -92,7 +96,6 @@ function InfoForm() {
         const tableWidth = parseInt(table.width);
         const chairsPerTable = selectedValue.chairspertable;
         const spaceAroundArrangement = parseInt(newShapes[shapeIndex].spaceAroundArrangement) || 0;
-
 
         const tableArea = tableLength * tableWidth;
         const unUsableChairArea = (chairWidth * chairWidth) * 4;
@@ -174,32 +177,39 @@ function InfoForm() {
         return Math.floor(shape.area / (arrangementLength * arrangementWidth));
     }
   };
+
   const calculateRectangularFit = (spaceLength: number, spaceWidth: number, itemLength: number, itemWidth: number): number => {
     const lengthWise = Math.floor(spaceLength / itemLength);
     const widthWise = Math.floor(spaceWidth / itemWidth);
     return lengthWise * widthWise;
   };
+
   const calculateCircularFit = (radius: number, itemLength: number, itemWidth: number): number => {
     const diameter = radius * 2;
     const squareFit = calculateRectangularFit(diameter, diameter, itemLength, itemWidth);
     return Math.floor(squareFit * 0.78); // Approximate circular area ratio
   };
+
   const calculateTriangularFit = (base: number, height: number, itemLength: number, itemWidth: number): number => {
     const rectangularArea = base * height / 2;
     return Math.floor(rectangularArea / (itemLength * itemWidth) * 0.65); // Approximation
   };
+
   const calculateEllipseFit = (a: number, b: number, itemLength: number, itemWidth: number): number => {
     const rectangularArea = a * b;
     return Math.floor(rectangularArea / (itemLength * itemWidth) * 0.78); // Similar to circular approximation
   };
+
   const calculateTrapeziumFit = (a: number, b: number, h: number, itemLength: number, itemWidth: number): number => {
     const area = (a + b) * h / 2;
     return Math.floor(area / (itemLength * itemWidth) * 0.85); // Approximation
   };
+
   const calculateParallelogramFit = (base: number, height: number, itemLength: number, itemWidth: number): number => {
     const area = base * height;
     return Math.floor(area / (itemLength * itemWidth) * 0.9); // Approximation
   };
+
   const handleSpaceAroundChange = (shapeIndex: number, data: any) => {
     setSelectedShapes((prevShapes) => {
       const newShapes = [...prevShapes];
@@ -207,11 +217,14 @@ function InfoForm() {
       newShapes[shapeIndex].spaceAroundChair = data.spaceAroundChair;
       newShapes[shapeIndex].obstacles = data.obstacles;
       newShapes[shapeIndex].selectedArrangement = "";
-      newShapes[shapeIndex].noOfArrangements=0
+      newShapes[shapeIndex].noOfArrangements = 0;
       return newShapes;
     });
   };
 
+  const handleRemoveShape = (shapeIndex: number) => {
+    setSelectedShapes((prevShapes) => prevShapes.filter((_, index) => index !== shapeIndex));
+  };
 
   const infoForm = useForm<InfoFormData>({
     mode: "onChange"
@@ -234,133 +247,123 @@ function InfoForm() {
   return (
     <FormProvider {...infoForm}>
       <form onSubmit={infoForm.handleSubmit(handleInfoSubmit)}>
-        <h1 className="text-xl font-semibold mb-3 mx-9 bg-green-400 p-2 ">Space Parameters</h1>
-        <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2 mx-4"
-             style={{ marginBottom: "2rem" }}>
+        <h1 className="text-xl font-semibold mb-3 mx-9 bg-green-400 p-2">Space Parameters</h1>
+        <div className="py-2 lg:px-8 rounded-md grid lg:grid-cols-3 gap-x-6 lg:mt-2 mx-4" style={{ marginBottom: "2rem" }}>
           <div className="mt-2">
-            <h1 className="text-xl font-semibold mb-6 ">Select Shape</h1>
-            <SelectSpaceShape onSelectShape={handleSelectShapes} onSelectInput={(handleShowMessage)} />
+            <h1 className="text-xl font-semibold mb-6">Select Shape</h1>
+            <SelectSpaceShape onSelectShape={handleSelectShapes} onSelectInput={handleShowMessage} />
           </div>
           <div className="mt-2">
             <h1 className="text-xl font-semibold mb-6">Select a Chair</h1>
-            <SelectionDialog items={chairs && chairs} name={"Select Chair Type"} type={"Chair"}
-                             handleSelect={handleSelect} message={showMessage} />
+            <SelectionDialog items={chairs && chairs} name={"Select Chair Type"} type={"Chair"} handleSelect={handleSelect} message={showMessage} />
           </div>
           <div className="mt-2">
             <h1 className="text-xl font-semibold mb-6">Select a Table</h1>
-            <SelectionDialog items={tables && tables} name={"Select Table Type"} type={"Table"}
-                             handleSelect={handleSelect} message={showMessage} />
+            <SelectionDialog items={tables && tables} name={"Select Table Type"} type={"Table"} handleSelect={handleSelect} message={showMessage} />
           </div>
-
-
         </div>
         <div className="mx-10 mt-4">
           <h1 className="text-lg font-semibold mb-6 bg-green-400 p-2">Space Information</h1>
-          {selectedShapes.length !== 0 ? <List style={{ width: "100%" }}>
-            {selectedShapes.map((shapeObj, index) => (
-              <ListItem key={index} style={{ width: "100%", display: "flex", flexDirection: "column" }}>
-                <div style={{ borderBottom: "1px solid", display: "flex", width: "100%", marginBottom: "0.5rem", justifyContent:'space-between' }}>
-                  <Box
-                    style={{ borderRadius: "0 10px 0 0", padding: "0.5rem", paddingBottom: "0.1rem", fontWeight: "bold", backgroundColor: "rgb(25,125,215)", color: "white" }}>
-                    {shapeObj.shape}
-                  </Box>
-                  <div>
-                    <Visualization shape={shapeObj} />
+          {selectedShapes.length !== 0 ? (
+            <List style={{ width: "100%" }}>
+              {selectedShapes.map((shapeObj, index) => (
+                <ListItem key={index} style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+                  <div style={{ borderBottom: "1px solid", display: "flex", width: "100%", marginBottom: "0.5rem", justifyContent: "space-between" }}>
+                    <Box style={{ borderRadius: "0 10px 0 0", padding: "0.5rem", paddingBottom: "0.1rem", fontWeight: "bold", backgroundColor: "rgb(25,125,215)", color: "white" }}>
+                      {shapeObj.shape}
+                    </Box>
+                    {(shapeObj.shape === "Square" || shapeObj.shape === "Rectangle" || shapeObj.shape === "Ellipse") && <div>
+                      <Visualization shape={shapeObj} />
+                    </div>}
                   </div>
-                </div>
-                <div style={{ marginBottom: "1rem", display: "flex", width: "100%", justifyContent: "space-evenly" }}>
-                  <div style={{ flex: 0.3, display: "flex", alignItems: "center" }}>
-                    <ShapeRenderer shape={shapeObj.shape} dimensions={shapeObj.dimensions} />
+                  <div style={{ marginBottom: "1rem", display: "flex", width: "100%", justifyContent: "space-evenly" }}>
+                    <div style={{ flex: 0.3, display: "flex", alignItems: "center" }}>
+                      <ShapeRenderer shape={shapeObj.shape} dimensions={shapeObj.dimensions} />
+                    </div>
+                    <div style={{ flex: 0.5, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <Typography style={{ marginRight: "1rem" }}>
+                        {formatDimensions(shapeObj.shape, shapeObj.dimensions)}
+                        <div>Area: {shapeObj.area.toFixed(2)}m</div>
+                      </Typography>
+                    </div>
+                    <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <BoundariesAndObstacles index={index} onChange={handleSpaceAroundChange} shape={shapeObj} />
+                    </div>
+                    <div style={{ flex: 0.4, display: "flex", justifyContent: "center", alignItems: "center", marginRight: "1rem" }}>
+                      <FormControl style={{ width: "100%" }}>
+                        <InputLabel id="demo-simple-select-label">Select an Arrangement</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={shapeObj.selectedArrangement ? shapeObj.selectedArrangement._id : ""}
+                          label="Select an Arrangement"
+                          size="medium"
+                          onChange={(e) => handleSelectArrangement(index, e.target.value)}
+                        >
+                          {arrangements && arrangements.map((arrangement) => (
+                            <MenuItem key={arrangement._id} value={arrangement._id}>{arrangement.name}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div style={{ flex: 0.4, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <TextField
+                        label="No of Arrangements"
+                        type="number"
+                        fullWidth
+                        style={{ marginTop: '1rem' }}
+                        placeholder={`Max: ${shapeObj.maxArrangements}`}
+                        name="noOfArrangements"
+                        helperText={`Max Arrangements: ${shapeObj.maxArrangements}`}
+                        value={shapeObj.noOfArrangements || 0}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          setSelectedShapes((prevShapes) => {
+                            const newShapes = [...prevShapes];
+                            newShapes[index].noOfArrangements = Math.min(Math.max(value, 0), shapeObj.maxArrangements);
+                            return newShapes;
+                          });
+                        }}
+                        inputProps={{
+                          min: 0,
+                          max: shapeObj.maxArrangements,
+                          readOnly: true,
+                          style: {
+                            textAlign: 'center',
+                            MozAppearance: 'textfield',
+                          },
+                        }}
+                        InputProps={{
+                          inputProps: {
+                            style: { textAlign: 'center' }
+                          },
+                          style: {
+                            WebkitAppearance: 'none',
+                            margin: 0
+                          },
+                        }}
+                      />
+                    </div>
+                    <div style={{ flex: 0.1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <Button variant="outlined" color="error" sx={{ mx: "1rem", height: '6.5vh' }} startIcon={<DeleteIcon/>} onClick={() => handleRemoveShape(index)}>Remove</Button>
+                    </div>
                   </div>
-                  <div style={{ flex: 0.5, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <Typography style={{ marginRight: "1rem" }}>
-                      {formatDimensions(shapeObj.shape, shapeObj.dimensions)} -
-                      Area: {shapeObj.area.toFixed(2)}
-                    </Typography>
-                  </div>
-                  <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <BoundariesAndObstacles index={index} onChange={handleSpaceAroundChange} shape={shapeObj} />
-                  </div>
-                  <div
-                    style={{ flex: 0.6, display: "flex", justifyContent: "center", alignItems: "center", marginRight: "1rem" }}>
-                    <FormControl style={{ width: "100%" }}>
-                      <InputLabel id="demo-simple-select-label">Select an Arrangement</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={shapeObj.selectedArrangement ? shapeObj.selectedArrangement._id : ""}
-                        label="Select an Arrangement"
-                        size={"medium"}
-                        onChange={(e) => handleSelectArrangement(index, e.target.value)}
-                      >
-                        {arrangements && arrangements.map((arrangement) => (
-                          <MenuItem key={arrangement._id} value={arrangement._id}>{arrangement.name}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div style={{ flex: 0.4, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <TextField
-                      label="No of Arrangements"
-                      type="number"
-                      fullWidth
-                      style={{marginTop:'1rem'}}
-                      placeholder={`Max: ${shapeObj.maxArrangements}`}
-                      name="noOfArrangements"
-                      helperText={`Max Arrangements: ${shapeObj.maxArrangements} `}
-                      value={shapeObj.noOfArrangements || 0}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        setSelectedShapes((prevShapes) => {
-                          const newShapes = [...prevShapes];
-                          newShapes[index].noOfArrangements = Math.min(Math.max(value, 0), shapeObj.maxArrangements);
-                          return newShapes;
-                        });
-                      }}
-                      inputProps={{
-                        min: 0,
-                        max: shapeObj.maxArrangements,
-                        readOnly: true,
-                        style: {
-                          textAlign: 'center',
-                          MozAppearance: 'textfield',
-                        },
-                      }}
-                      InputProps={{
-                        inputProps: {
-                          style: { textAlign: 'center' }
-                        },
-                        style: {
-                          WebkitAppearance: 'none',
-                          margin: 0
-                        },
-                      }}
-                    />
-                  </div>
-
-                </div>
-              </ListItem>
-            ))}
-          </List> : <div className="flex justify-center italic">No Space Information Available</div>}
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <div className="flex justify-center italic">No Space Information Available</div>
+          )}
         </div>
-
         <div className="mx-10 mt-4">
           <h1 className="text-lg font-semibold mb-6 bg-green-400 p-2">Reservation Details</h1>
           <div style={{ display: "flex", width: "100%", gap: 20 }}>
-            <TextField fullWidth margin={"normal"} type="text" label="Location" name="location" placeholder="eg: Havelock Town"
-                       onChange={handleReservationDataChange} />
-            <TextField fullWidth margin={"normal"} type="date" label="Date" InputLabelProps={{ shrink: true }}
-                       name="date" onChange={handleReservationDataChange} />
-            <TextField fullWidth margin={"normal"} type="time" label="Time" InputLabelProps={{ shrink: true }}
-                       name="time" onChange={handleReservationDataChange} />
+            <TextField fullWidth margin="normal" type="text" label="Location" name="location" placeholder="eg: Havelock Town" onChange={handleReservationDataChange} />
+            <TextField fullWidth margin="normal" type="date" label="Date" InputLabelProps={{ shrink: true }} name="date" onChange={handleReservationDataChange} />
+            <TextField fullWidth margin="normal" type="time" label="Time" InputLabelProps={{ shrink: true }} name="time" onChange={handleReservationDataChange} />
           </div>
           <div style={{ marginTop: "3rem", marginBottom: "3rem" }}>
-            <Report order={{
-              arrangements: selectedShapes,
-              chair: chair,
-              table: table,
-              reservationData: reservationData
-            }} isDisabled={false} />
+            <Report order={{ arrangements: selectedShapes, chair: chair, table: table, reservationData: reservationData }} isDisabled={false} />
           </div>
         </div>
       </form>
