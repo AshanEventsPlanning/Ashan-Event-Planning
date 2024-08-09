@@ -41,7 +41,7 @@ export default function OrderTable({rows}) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row:Row) => (
             <TableRow key={row.arrangement}>
               <TableCell>{row.arrangement}</TableCell>
               <TableCell align="right">{row.qty}</TableCell>
