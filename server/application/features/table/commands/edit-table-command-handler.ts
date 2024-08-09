@@ -7,13 +7,13 @@ type EditTableCommand = z.infer<typeof EditTableDTO>;
 export default async function editTableCommandHandler(
     command: EditTableCommand
 ) {
-    const {_id,name,length, width,price,stock, image} = command;
+    const {_id,name,length, width,price,stock,status, image} = command;
     const table = {
         _id,
         _type: "table",
         name,
         length,
-        width,price,stock,
+        width,price,stock,status,
         image
     };
     const publishedCloth = await dynamicClient.createOrReplace(table);
