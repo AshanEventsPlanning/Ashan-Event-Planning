@@ -1,11 +1,11 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { forwardRef, Ref, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
+import Slide, { SlideProps } from "@mui/material/Slide";
 import { Box, InputAdornment, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Table from "@mui/material/Table";
@@ -19,7 +19,10 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(
+  props: SlideProps & { children: React.ReactElement<any, any> },
+  ref: Ref<unknown>,
+) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
