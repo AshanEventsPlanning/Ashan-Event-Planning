@@ -3,7 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-
+import StarsIcon from '@mui/icons-material/Stars';
 // @ts-ignore
 export default function ItemCard({item, onSelect}) {
   return (
@@ -12,6 +12,9 @@ export default function ItemCard({item, onSelect}) {
 
         <img src={item.image}  style={{minHeight:'30vh'}} />
         <CardContent>
+          {item.name === "Steel Chair" && <Typography variant="body2" style={{display:'flex', alignItems:'center'}} ><StarsIcon style={{color:'rgb(245,230,85)'}} /> Fast Moving Chair</Typography>}
+          {item.name === "Reactangular Table" && <Typography variant="body2" style={{display:'flex', alignItems:'center'}} ><StarsIcon style={{color:'rgb(245,230,85)'}} /> Fast Moving Table</Typography>}
+
           <Typography gutterBottom variant="h5" component="div">
             {item.name}
           </Typography>
